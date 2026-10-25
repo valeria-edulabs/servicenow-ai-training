@@ -12,7 +12,6 @@ from langchain_core.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.checkpoint.memory import MemorySaver
 from langchain.agents import create_agent
-from langchain.agents.middleware import HumanInTheLoopMiddleware
 from langgraph.types import Command
 
 load_dotenv()
@@ -109,18 +108,12 @@ Your task is to analyze the data to answer user questions. You must use the `pyt
 llm = ChatGoogleGenerativeAI(model="gemini-flash-lite-latest")
 memory = MemorySaver()
 
-hitl_middleware = HumanInTheLoopMiddleware(
-    interrupt_on={
-        "python_interpreter": True
-    }
-)
 
 data_agent = create_agent(
     model=llm,
     tools=[python_interpreter],
     checkpointer=memory,
-    system_prompt=SYSTEM_PROMPT,
-    # middleware=[hitl_middleware]
+    system_prompt=SYSTEM_PROMPT
 )
 
 def stream(text: str, thread_id: str):
